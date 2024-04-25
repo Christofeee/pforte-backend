@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\User;
 
 use Illuminate\Http\Request;
+use Throwable;
 
 class UserController extends Controller
 {
@@ -14,9 +16,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        //get all users
-        $userData = User::all();
-        return response()->json($userData, 200);
+        //Fetch all users
+        try {
+            $userData = User::get();
+            if (!$userData) {
+                return response()->json(['message' => 'there is no user'], 404);
+            }
+            return response()->json($userData, 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -48,7 +57,16 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        // Find the user by ID
+        try {
+            $user = User::where('user_id', $id)->first();
+            if (!$user) {
+                return response()->json(['error' => 'User not found'], 404);
+            }
+            return response()->json($user, 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

@@ -25,10 +25,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('users', UserController::class);
-Route::resource('classrooms', ClassroomController::class);
-Route::resource('announcements', AnnouncementController::class);
-Route::resource('modules', ModuleController::class);
-Route::resource('assessments', AssessmentController::class);
-Route::resource('grades', GradeController::class);
-Route::resource('submissions', SubmissionController::class);
+Route::controller(UserController::class)->group(function () {
+    Route::get('/users', 'index');
+    Route::get('/users/{id}', 'show');
+});
+
+// Route::resource('users', UserController::class);
+// Route::resource('classrooms', ClassroomController::class);
+// Route::resource('announcements', AnnouncementController::class);
+// Route::resource('modules', ModuleController::class);
+// Route::resource('assessments', AssessmentController::class);
+// Route::resource('grades', GradeController::class);
+// Route::resource('submissions', SubmissionController::class);
