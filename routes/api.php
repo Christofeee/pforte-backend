@@ -26,8 +26,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(UserController::class)->group(function () {
-    Route::get('/users', 'index');
-    Route::get('/users/{id}', 'show');
+    Route::get('/users', 'index');          //fetch all users
+    Route::get('/users/{id}', 'show');      //fetch user by id
+    Route::put('/users', 'store');          //put new user
+    Route::patch('/users/{id}', 'update');  //modify user by id
+    Route::delete('/users/{id}', 'destroy');  //remove user by id
 });
 
 // Route::resource('users', UserController::class);
