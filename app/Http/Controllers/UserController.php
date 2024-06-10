@@ -84,7 +84,7 @@ class UserController extends Controller
             $user->user_type = $request->input('user_type');
             $user->save();
 
-            return response()->json(['message' => "successfully created new user"], 200);
+            return response()->json(['message' => "successfully created new user"], 201);
         } catch (Throwable $e) {
             return response()->json(['error_message' => $e->getMessage()], 500);
         }

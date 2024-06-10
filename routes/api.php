@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\ClassroomUserController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\AssessmentController;
@@ -31,6 +32,17 @@ Route::controller(UserController::class)->group(function () {
     Route::put('/users', 'store');          //put new user
     Route::patch('/users/{id}', 'update');  //modify user by id
     Route::delete('/users/{id}', 'destroy');  //remove user by id
+});
+
+Route::controller(ClassroomController::class)->group(function () {
+    Route::get('/classrooms', 'index');
+    Route::put('/classrooms', 'store');
+    Route::patch('/classrooms/{id}', 'update');
+    Route::delete('/classrooms/{id}', 'destroy');
+});
+
+Route::controller(ClassroomUserController::class)->group(function () {
+    Route::get('/classroom-users', 'index');
 });
 
 // Route::resource('users', UserController::class);
