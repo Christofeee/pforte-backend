@@ -14,11 +14,34 @@ class ModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //get all modules
-        $moduleData = Module::all();
-        return response()->json($moduleData, 200);
+        try {
+            // Retrieve query parameters
+            $queryParams = $request->query();
+
+            // Check if classId parameter is present
+            if (isset($queryParams['classId'])) {
+                $classId = $queryParams['classId'];
+
+                // Query modules based on classroom_id
+                $modules = Module::where('classroom_id', $classId)->get();
+            } else {
+                // Fetch all modules
+                $modules = Module::all();
+            }
+
+            // Check if modules are found
+            if ($modules->isEmpty()) {
+                return response()->json(['message' => 'Modules not found'], 404);
+            }
+
+            // Return JSON response with modules
+            return response()->json($modules, 200);
+        } catch (\Throwable $e) {
+            // Handle exceptions and return error response
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
