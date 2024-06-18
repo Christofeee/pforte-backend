@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pdf;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class PdfUploadController extends Controller
@@ -17,24 +17,19 @@ class PdfUploadController extends Controller
                 return response()->json(['error' => 'PDF not found'], 404);
             }
 
-            // Construct the file path
             $filePath = storage_path('app/' . $pdf->path);
 
-            // Check if the file exists
             if (!file_exists($filePath)) {
                 return response()->json(['error' => 'PDF file not found on the server'], 404);
             }
 
-            // Read the file content
             $fileContent = file_get_contents($filePath);
 
-            // Prepare headers
             $headers = [
                 'Content-Type' => 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . $pdf->title . '"',
             ];
 
-            // Return the file content as response
             return response($fileContent, 200)->withHeaders($headers);
 
         } catch (Exception $e) {
@@ -45,9 +40,8 @@ class PdfUploadController extends Controller
     public function getFilesByIds(Request $request)
     {
         try {
-            $ids = $request->input('ids'); // Assuming ids are passed as an array in the request body
+            $ids = $request->input('ids');
 
-            // Fetch PDFs based on the provided IDs
             $pdfs = Pdf::whereIn('id', $ids)->get();
 
             if ($pdfs->isEmpty()) {
@@ -61,7 +55,7 @@ class PdfUploadController extends Controller
 
                 if (file_exists($filePath)) {
                     $fileContent = file_get_contents($filePath);
-                    $base64Content = base64_encode($fileContent); // Base64 encode to safely transmit binary data in JSON
+                    $base64Content = base64_encode($fileContent);
                     $pdfFiles[] = [
                         'id' => $pdf->id,
                         'title' => $pdf->title,
@@ -77,29 +71,26 @@ class PdfUploadController extends Controller
         }
     }
 
-
-
     public function upload(Request $request)
     {
         try {
-            // Validate the request
             $request->validate([
-                'fileName' => 'required|file|mimes:pdf|max:10240', // 10 MB max file size
+                'fileName' => 'required|file|mimes:pdf|max:10240',
             ]);
 
             if ($request->hasFile('fileName')) {
                 $file = $request->file('fileName');
-
-                // Sanitize the original filename to remove any unsafe characters
                 $originalName = preg_replace('/[^a-zA-Z0-9\-\._]/', '_', $file->getClientOriginalName());
 
-                // Define the storage path
-                $path = 'public/pdfs';
+                // Check if a PDF with the same title already exists
+                $existingPdf = Pdf::where('title', $originalName)->first();
+                if ($existingPdf) {
+                    return response()->json(['error' => 'A PDF with the same title already exists'], 400);
+                }
 
-                // Store the file with its original name
+                $path = 'public/pdfs';
                 $storedPath = $file->storeAs($path, $originalName);
 
-                // Store file info into the database
                 $save = new Pdf();
                 $save->title = $originalName;
                 $save->path = $storedPath;
@@ -110,7 +101,6 @@ class PdfUploadController extends Controller
                 return response()->json(['error' => 'No file found in request'], 400);
             }
         } catch (Exception $e) {
-            // Handle any exceptions that occur during the file upload or database saving process
             return response()->json(['error' => 'File upload failed: ' . $e->getMessage()], 500);
         }
     }
