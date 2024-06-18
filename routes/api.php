@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ClassroomUserController;
-use App\Http\Controllers\PdfUploadController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\AssessmentController;
@@ -50,8 +50,9 @@ Route::controller(ClassroomUserController::class)->group(function () {
     Route::delete('/classroom-users/{id}', 'destroy');
 });
 
-Route::controller(PdfUploadController::class)->group(function () {
+Route::controller(PdfController::class)->group(function () {
     Route::get('/pdf/{id}', 'getFileById');
+    Route::get('/pdfs/{moduleId}', 'getFilesByModuleId');
     Route::post('/pdf', 'upload');
     Route::post('/pdfs', 'getFilesByIds'); // New endpoint to fetch multiple PDFs
 });
