@@ -57,6 +57,7 @@ Route::controller(PdfUploadController::class)->group(function () {
 });
 Route::controller(ModuleController::class)->group(function () {
     Route::get('/modules', 'index');
+    Route::get('/module/{id}', 'show');
     Route::put('/module', 'store');
 });
 

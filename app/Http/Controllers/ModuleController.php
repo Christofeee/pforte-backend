@@ -82,9 +82,26 @@ class ModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function find($id)
+    {
+        $modueData = Module::where('id', $id)->first();
+        if (!$modueData) {
+            return null;
+        }
+        return $modueData;
+    }
     public function show($id)
     {
-        //
+        try {
+            $moduleData = $this->find($id);
+            if (!$moduleData) {
+                return response()->json(['message' => 'module not found'], 404);
+            }
+            return response()->json($moduleData, 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
