@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Module;
 
 use Illuminate\Http\Request;
+use Throwable;
 
 class ModuleController extends Controller
 {
@@ -37,7 +39,18 @@ class ModuleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $module = new Module();
+            $module->name = $request->input('name');
+            $module->description = $request->input('description');
+            $module->isComplete = $request->input('isComplete');
+            $module->classroom_id = $request->input('classroom_id');
+            $module->save();
+
+            return response()->json(['message' => "successfully created new module"], 201);
+        } catch (Throwable $e) {
+            return response()->json(['error_message' => $e->getMessage()], 500);
+        }
     }
 
     /**

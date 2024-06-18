@@ -61,7 +61,15 @@ class ClassroomController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $classData = $this->find($id);
+            if (!$classData) {
+                return response()->json(['message' => 'class not found'], 404);
+            }
+            return response()->json($classData, 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -77,7 +85,6 @@ class ClassroomController extends Controller
 
     public function find($id)
     {
-        // find user by id
         $classData = Classroom::where('classroom_id', $id)->first();
         if (!$classData) {
             return null;

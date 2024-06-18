@@ -37,6 +37,7 @@ Route::controller(UserController::class)->group(function () {
 
 Route::controller(ClassroomController::class)->group(function () {
     Route::get('/classrooms', 'index');
+    Route::get('/classroom/{id}', 'show');
     Route::put('/classrooms', 'store');
     Route::patch('/classrooms/{id}', 'update');
     Route::delete('/classrooms/{id}', 'destroy');
@@ -53,6 +54,10 @@ Route::controller(PdfUploadController::class)->group(function () {
     Route::get('/pdf/{id}', 'getFileById');
     Route::post('/pdf', 'upload');
     Route::post('/pdfs', 'getFilesByIds'); // New endpoint to fetch multiple PDFs
+});
+Route::controller(ModuleController::class)->group(function () {
+    Route::get('/modules', 'index');
+    Route::put('/module', 'store');
 });
 
 
