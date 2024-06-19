@@ -51,11 +51,15 @@ Route::controller(ClassroomUserController::class)->group(function () {
 });
 
 Route::controller(PdfController::class)->group(function () {
-    Route::get('/pdf/{id}', 'getFileById');
-    Route::get('/pdfs/{moduleId}', 'getFilesByModuleId');
+    Route::get('/pdfs/{moduleId}', 'getPdfFilesByModuleId');
+    Route::get('/pdfs/download/{pdfId}', 'downloadPdf');
     Route::post('/pdf', 'upload');
-    Route::post('/pdfs', 'getFilesByIds'); // New endpoint to fetch multiple PDFs
 });
+
+// Route::get('/pdfs/{moduleId}', [PdfController::class, 'getPdfFilesByModuleId']);
+// Route::get('/pdfs/download/{pdfId}', [PdfController::class, 'downloadPdf']);
+// Route::post('/pdf', [PdfController::class, 'upload']);
+
 Route::controller(ModuleController::class)->group(function () {
     Route::get('/modules', 'index');
     Route::get('/module/{id}', 'show');
