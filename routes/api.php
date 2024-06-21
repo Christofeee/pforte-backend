@@ -54,6 +54,7 @@ Route::controller(PdfController::class)->group(function () {
     Route::get('/pdfs/{moduleId}', 'getPdfFilesByModuleId');
     Route::get('/pdfs/download/{pdfId}', 'downloadPdf');
     Route::post('/pdf', 'upload');
+    Route::delete('/pdfs', 'deletePdfs');
 });
 
 // Route::get('/pdfs/{moduleId}', [PdfController::class, 'getPdfFilesByModuleId']);
