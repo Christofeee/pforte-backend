@@ -51,4 +51,24 @@ class AssessmentController extends Controller
             return response()->json(['error' => 'Failed to create assessment: ' . $e->getMessage()], 500);
         }
     }
+
+    public function getByModuleId($moduleId)
+    {
+        try {
+            $assessments = Assessment::where('module_id', $moduleId)->get();
+
+            $assessmentsWithFiles = [];
+
+            foreach ($assessments as $assessment) {
+                $assessmentData = $assessment->toArray();
+                $files = AssessmentFile::where('assessment_id', $assessment->id)->get();
+                $assessmentData['files'] = $files;
+                $assessmentsWithFiles[] = $assessmentData;
+            }
+
+            return response()->json($assessmentsWithFiles, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch assessments: ' . $e->getMessage()], 500);
+        }
+    }
 }
