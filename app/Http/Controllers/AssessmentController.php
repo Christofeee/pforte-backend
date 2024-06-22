@@ -1,87 +1,54 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Assessment;
 
 use Illuminate\Http\Request;
+use App\Models\Assessment;
+use App\Models\AssessmentFile;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class AssessmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //get all assessments
-        $assessmentData = Assessment::all();
-        return response()->json($assessmentData, 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
-    }
+        try {
+            $data = $request->validate([
+                'title' => 'required|string|max:255',
+                'due_date_time' => 'required|date',
+                'instruction' => 'nullable|string',
+                'link' => 'nullable|string|max:1000',
+                'mark' => 'nullable|integer',
+                'module_id' => 'nullable|integer',
+                'classroom_id' => 'nullable|integer',
+                'files' => 'nullable|array',
+                'files.*' => 'required_with:files|file|max:10240',
+            ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+            Log::info("validation passed in assessment store function");
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+            $assessment = Assessment::create($data);
+            Log::info("Assessment created: " . $assessment);
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+            if ($request->has('files')) {
+                Log::info("request has files.");
+                foreach ($request->file('files') as $file) {
+                    $originalName = preg_replace('/[^a-zA-Z0-9\-\._]/', '_', $file->getClientOriginalName());
+                    $uniqueFilename = $file->hashName();
+                    $storedPath = $file->storeAs('public/assessments/files', $uniqueFilename);
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+                    $assessmentFile = AssessmentFile::create([
+                        'file_name' => $originalName,
+                        'file_path' => $storedPath,
+                        'assessment_id' => $assessment->id,
+                    ]);
+                    Log::info("AssessmentFile created: " . $assessmentFile);
+                }
+            }
+
+            return response()->json("Assessment created successfully.", 201);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to create assessment: ' . $e->getMessage()], 500);
+        }
     }
 }
