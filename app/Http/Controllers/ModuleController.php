@@ -124,7 +124,26 @@ class ModuleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            // Find the module by id
+            $module = Module::find($id);
+
+            // Check if module exists
+            if (!$module) {
+                return response()->json(['message' => 'Module not found'], 404);
+            }
+
+            // Update the module with the provided data
+            $module->name = $request->input('name', $module->name);
+            $module->description = $request->input('description', $module->description);
+            $module->isComplete = $request->input('isComplete', $module->isComplete);
+            $module->classroom_id = $request->input('classroom_id', $module->classroom_id);
+            $module->save();
+
+            return response()->json(['message' => 'Module updated successfully'], 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
