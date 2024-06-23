@@ -61,6 +61,7 @@ Route::controller(PdfController::class)->group(function () {
 Route::controller(AssessmentController::class)->group(function () {
     Route::post('/assessment', 'store');
     Route::get('/assessment/{moduleId}', 'getByModuleId');
+    Route::delete('/assessment/{assessmentId}', 'delete');
 });
 
 // Route::get('/pdfs/{moduleId}', [PdfController::class, 'getPdfFilesByModuleId']);

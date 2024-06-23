@@ -7,6 +7,7 @@ use App\Models\Assessment;
 use App\Models\AssessmentFile;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class AssessmentController extends Controller
 {
@@ -69,6 +70,30 @@ class AssessmentController extends Controller
             return response()->json($assessmentsWithFiles, 200);
         } catch (Exception $e) {
             return response()->json(['error' => 'Failed to fetch assessments: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            // Find the assessment by ID
+            $assessment = Assessment::findOrFail($id);
+
+            // Get associated files
+            $files = AssessmentFile::where('assessment_id', $assessment->id)->get();
+
+            // Delete associated files from storage
+            foreach ($files as $file) {
+                Storage::delete($file->file_path);
+                $file->delete(); // Delete file record from database
+            }
+
+            // Delete the assessment
+            $assessment->delete();
+
+            return response()->json("Assessment and its files deleted successfully.", 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to delete assessment: ' . $e->getMessage()], 500);
         }
     }
 }
