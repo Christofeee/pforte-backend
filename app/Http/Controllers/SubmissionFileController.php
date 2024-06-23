@@ -26,7 +26,7 @@ class SubmissionFileController extends Controller
             // Validate the incoming request
             $request->validate([
                 'assessment_id' => 'required|integer',
-                'student_id' => 'required|integer',
+                'student_id' => 'required|string',
             ]);
 
             // Retrieve the files

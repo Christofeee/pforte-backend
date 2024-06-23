@@ -82,6 +82,7 @@ Route::controller(SubmissionFileController::class)->group(function () {
 Route::controller(SubmissionController::class)->group(function () {
     Route::get('/submission', 'index');
     Route::post('/submission', 'store');
+    Route::get('/get-submission/{assessment_id}', 'getByAssessmentId');
 });
 
 // Route::resource('users', UserController::class);
