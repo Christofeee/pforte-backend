@@ -1,87 +1,34 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Submission;
 
+use App\Models\Submission;
 use Illuminate\Http\Request;
 
 class SubmissionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    // Get all submissions
     public function index()
     {
-        //get all submissions
-        $submissionData = Submission::all();
-        return response()->json($submissionData, 200);
+        $submissions = Submission::all();
+        return response()->json($submissions);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    // Create a new submission
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'student_id' => 'required|integer',
+            'assessment_id' => 'required|integer',
+            'isSubmitted' => 'required|boolean',
+        ]);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        $submission = Submission::create([
+            'student_id' => $request->student_id,
+            'assessment_id' => $request->assessment_id,
+            'isSubmitted' => $request->isSubmitted,
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json($submission, 201);
     }
 }

@@ -11,6 +11,7 @@ use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SubmissionController;
+use App\Http\Controllers\SubmissionFileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +74,15 @@ Route::controller(ModuleController::class)->group(function () {
     Route::patch('/module/{id}', 'update');
 });
 
+Route::controller(SubmissionFileController::class)->group(function () {
+    Route::post('/get-submission-files', 'getByStudentAndAssessment');
+    Route::post('/submission-file', 'upload');
+});
+
+Route::controller(SubmissionController::class)->group(function () {
+    Route::get('/submission', 'index');
+    Route::post('/submission', 'store');
+});
 
 // Route::resource('users', UserController::class);
 // Route::resource('classrooms', ClassroomController::class);
