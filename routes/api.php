@@ -77,6 +77,7 @@ Route::controller(ModuleController::class)->group(function () {
 Route::controller(SubmissionFileController::class)->group(function () {
     Route::post('/get-submission-files', 'getByStudentAndAssessment');
     Route::post('/submission-file', 'upload');
+    Route::post('/submissions/download', 'downloadFileByStudentAndAssessment');
 });
 
 Route::controller(SubmissionController::class)->group(function () {

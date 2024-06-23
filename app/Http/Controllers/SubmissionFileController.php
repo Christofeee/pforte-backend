@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\SubmissionFile;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use ZipArchive;
+use Illuminate\Support\Facades\Log;
 
 class SubmissionFileController extends Controller
 {
@@ -16,7 +20,7 @@ class SubmissionFileController extends Controller
     public function index()
     {
         //get all submissions
-        $submissionData = Submission::all();
+        $submissionData = SubmissionFile::all();
         return response()->json($submissionData, 200);
     }
 
@@ -46,6 +50,72 @@ class SubmissionFileController extends Controller
             return response()->json(['error' => 'Failed to retrieve files: ' . $e->getMessage()], 500);
         }
     }
+
+    public function downloadFileByStudentAndAssessment(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $request->validate([
+                'assessment_id' => 'required|integer',
+                'student_id' => 'required|string',
+            ]);
+
+            // Retrieve the files
+            $assessmentId = $request->input('assessment_id');
+            $studentId = $request->input('student_id');
+
+            // Retrieve files from database
+            $files = SubmissionFile::where('assessment_id', $assessmentId)
+                ->where('student_id', $studentId)
+                ->get();
+
+            if ($files->isEmpty()) {
+                return response()->json(['error' => 'No files found for the given assessment and student.'], 404);
+            }
+
+            // Create a ZIP file
+            $zip = new ZipArchive;
+            $zipFileName = 'files_' . $assessmentId . '_' . $studentId . '.zip';
+            $zipFilePath = storage_path('app/public/' . $zipFileName);
+
+            Log::info('Creating ZIP file at path: ' . $zipFilePath);
+
+            if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+                foreach ($files as $file) {
+                    // Adjusted file path handling
+                    $filePath = storage_path('app/' . $file->file_path);
+
+                    if (file_exists($filePath)) {
+                        Log::info('Adding file to ZIP: ' . $filePath);
+                        $zip->addFile($filePath, basename($filePath)); // Ensure to use correct parameters
+                    } else {
+                        Log::warning('File does not exist: ' . $filePath);
+                    }
+                }
+
+                $zip->close();
+                Log::info('ZIP file created successfully.');
+
+                // Verify that the ZIP file exists before attempting to download
+                if (file_exists($zipFilePath)) {
+                    Log::info('ZIP file exists, preparing download.');
+                    return response()->download($zipFilePath)->deleteFileAfterSend(true);
+                } else {
+                    Log::error('ZIP file does not exist: ' . $zipFilePath);
+                    return response()->json(['error' => 'The file "' . $zipFilePath . '" does not exist'], 500);
+                }
+            } else {
+                Log::error('Failed to create ZIP file.');
+                return response()->json(['error' => 'Failed to create ZIP file'], 500);
+            }
+
+        } catch (Exception $e) {
+            Log::error('Exception occurred: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to download files: ' . $e->getMessage()], 500);
+        }
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
