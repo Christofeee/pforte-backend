@@ -12,6 +12,7 @@ use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\GradeController;
 use App\Http\Controllers\SubmissionController;
 use App\Http\Controllers\SubmissionFileController;
+use App\Http\Controllers\MarkController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +88,21 @@ Route::controller(SubmissionController::class)->group(function () {
     Route::get('/get-submission/{assessment_id}', 'getByAssessmentId');
 });
 
+Route::controller(MarkController::class)->group(function () {
+    Route::get('/marks', 'getAllMarks');
+    Route::get('/marks/student/{student_id}/assessment/{assessment_id}', 'getMarksByStudentAndAssessment');
+    Route::get('/marks/assessment/{assessment_id}', 'getMarksByAssessment');
+    Route::get('/marks/classroom/{classroom_id}', 'getMarksByClassroom');
+    Route::get('/marks/module/{module_id}', 'getMarksByModule');
+    Route::post('/marks/assessment/{assessment_id}/students', 'getMarksByAssessmentAndStudents');
+});
+
+// Route::post('/marks/assessment/{assessment_id}/students', [MarkController::class, 'getMarksByAssessmentAndStudents']);
+// Route::get('/marks', [MarkController::class, 'getAllMarks']);
+// Route::get('/marks/student/{student_id}/assessment/{assessment_id}', [MarkController::class, 'getMarksByStudentAndAssessment']);
+// Route::get('/marks/assessment/{assessment_id}', [MarkController::class, 'getMarksByAssessment']);
+// Route::get('/marks/classroom/{classroom_id}', [MarkController::class, 'getMarksByClassroom']);
+// Route::get('/marks/module/{module_id}', [MarkController::class, 'getMarksByModule']);
 // Route::resource('users', UserController::class);
 // Route::resource('classrooms', ClassroomController::class);
 // Route::resource('announcements', AnnouncementController::class);
