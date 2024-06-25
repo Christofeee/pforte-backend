@@ -95,8 +95,10 @@ Route::controller(MarkController::class)->group(function () {
     Route::get('/marks/classroom/{classroom_id}', 'getMarksByClassroom');
     Route::get('/marks/module/{module_id}', 'getMarksByModule');
     Route::post('/marks/assessment/{assessment_id}/students', 'getMarksByAssessmentAndStudents');
+    Route::post('/marks/save', 'saveMarks');
 });
 
+// Route::post('/marks/save', [MarkController::class, 'saveMarks']);
 // Route::post('/marks/assessment/{assessment_id}/students', [MarkController::class, 'getMarksByAssessmentAndStudents']);
 // Route::get('/marks', [MarkController::class, 'getAllMarks']);
 // Route::get('/marks/student/{student_id}/assessment/{assessment_id}', [MarkController::class, 'getMarksByStudentAndAssessment']);

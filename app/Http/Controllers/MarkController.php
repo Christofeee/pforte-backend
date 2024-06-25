@@ -53,4 +53,39 @@ class MarkController extends Controller
             ->get();
         return response()->json($marks);
     }
+
+    // Save or update marks
+    // Save or update marks
+    public function saveMarks(Request $request)
+    {
+        $marksData = $request->json()->all();
+
+        foreach ($marksData as $data) {
+            $existingMark = Mark::where('student_id', $data['student_id'])
+                ->where('assessment_id', $data['assessment_id'])
+                ->first();
+
+            if ($existingMark) {
+                // Update existing mark
+                $existingMark->update([
+                    'mark' => $data['mark'],
+                    'student_name' => $data['student_name'],
+                    'module_id' => $data['module_id'],
+                    'classroom_id' => $data['classroom_id'],
+                ]);
+            } else {
+                // Create new mark
+                Mark::create([
+                    'mark' => $data['mark'],
+                    'student_id' => $data['student_id'],
+                    'student_name' => $data['student_name'],
+                    'assessment_id' => $data['assessment_id'],
+                    'module_id' => $data['module_id'],
+                    'classroom_id' => $data['classroom_id'],
+                ]);
+            }
+        }
+
+        return response()->json(['message' => 'Marks saved successfully']);
+    }
 }
