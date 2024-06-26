@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Storage;
 
 class AssessmentController extends Controller
 {
+    public function index()
+    {
+        //get all classrooms
+        $assessments = Assessment::get();
+        return response()->json($assessments, 200);
+    }
+
     public function store(Request $request)
     {
         try {

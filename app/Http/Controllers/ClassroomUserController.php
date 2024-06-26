@@ -22,6 +22,18 @@ class ClassroomUserController extends Controller
         return response()->json($classroomUsers, 200);
     }
 
+    public function getByClassroomId($classroom_id)
+    {
+        // Find users by classroom_id
+        $classroomUsers = ClassroomUser::where('classroom_id', $classroom_id)->get();
+
+        if ($classroomUsers->isEmpty()) {
+            return response()->json(null, 200); // Returning null if no users found
+        }
+
+        return response()->json($classroomUsers, 200);
+    }
+
     /**
      * Show the form for creating a new resource.
      *

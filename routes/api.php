@@ -47,6 +47,7 @@ Route::controller(ClassroomController::class)->group(function () {
 
 Route::controller(ClassroomUserController::class)->group(function () {
     Route::get('/classroom-users', 'index');
+    Route::get('/classroom-users/{classroom_id}', 'getByClassroomId');
     Route::put('/classroom-users', 'store');
     Route::patch('/classroom-users/{id}', 'update');
     Route::delete('/classroom-users/{id}', 'destroy');
@@ -61,6 +62,7 @@ Route::controller(PdfController::class)->group(function () {
 
 Route::controller(AssessmentController::class)->group(function () {
     Route::post('/assessment', 'store');
+    Route::get('/assessments', 'index');
     Route::get('/assessment/{moduleId}', 'getByModuleId');
     Route::delete('/assessment/{assessmentId}', 'delete');
 });
