@@ -60,6 +60,27 @@ class AssessmentController extends Controller
         }
     }
 
+    public function getByClassroomId($classroomId)
+    {
+        try {
+            $assessments = Assessment::where('classroom_id', $classroomId)->get();
+
+            $assessmentsWithFiles = [];
+
+            foreach ($assessments as $assessment) {
+                $assessmentData = $assessment->toArray();
+                $files = AssessmentFile::where('assessment_id', $assessment->id)->get();
+                $assessmentData['files'] = $files;
+                $assessmentsWithFiles[] = $assessmentData;
+            }
+
+            return response()->json($assessmentsWithFiles, 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to fetch assessments: ' . $e->getMessage()], 500);
+        }
+    }
+
+
     public function getByModuleId($moduleId)
     {
         try {
