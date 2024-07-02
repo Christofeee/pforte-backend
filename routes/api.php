@@ -77,6 +77,7 @@ Route::controller(ModuleController::class)->group(function () {
     Route::get('/module/{id}', 'show');
     Route::put('/module', 'store');
     Route::patch('/module/{id}', 'update');
+    Route::delete('/module/{id}', 'destroy');
 });
 
 Route::controller(SubmissionFileController::class)->group(function () {

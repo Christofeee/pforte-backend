@@ -154,6 +154,22 @@ class ModuleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            // Find the module by id
+            $module = Module::find($id);
+
+            // Check if module exists
+            if (!$module) {
+                return response()->json(['message' => 'Module not found'], 404);
+            }
+
+            // Delete the module
+            $module->delete();
+
+            return response()->json(['message' => 'Module deleted successfully'], 200);
+        } catch (Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
+
 }
