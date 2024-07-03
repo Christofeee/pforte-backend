@@ -145,7 +145,7 @@ class SubmissionFileController extends Controller
             $request->validate([
                 'files.*' => 'required|file|max:10240',  // Accept any file type
                 'assessment_id' => 'required|integer',
-                'student_id' => 'required|integer',
+                'student_id' => 'required|string',
             ]);
 
             // Check if files are present in the request
