@@ -66,6 +66,7 @@ Route::controller(AssessmentController::class)->group(function () {
     Route::get('/assessments/{classroom_id}', 'getByClassroomId');
     Route::get('/assessment/{moduleId}', 'getByModuleId');
     Route::delete('/assessment/{assessmentId}', 'delete');
+    Route::get('assessment/file/download/{id}', 'downloadFile');
 });
 
 // Route::get('/pdfs/{moduleId}', [PdfController::class, 'getPdfFilesByModuleId']);

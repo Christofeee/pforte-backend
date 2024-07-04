@@ -124,4 +124,25 @@ class AssessmentController extends Controller
             return response()->json(['error' => 'Failed to delete assessment: ' . $e->getMessage()], 500);
         }
     }
+    public function downloadFile($id)
+    {
+        try {
+            // Retrieve the file record from the database
+            $file = AssessmentFile::findOrFail($id);
+
+            // Get the file's storage path
+            $filePath = storage_path('app/' . $file->file_path);
+
+            // Check if the file exists
+            if (!file_exists($filePath)) {
+                return response()->json(['error' => 'File not found.'], 404);
+            }
+
+            // Return the file as a download response
+            return response()->download($filePath, $file->file_name);
+        } catch (Exception $e) {
+            Log::error('Failed to download file: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to download file: ' . $e->getMessage()], 500);
+        }
+    }
 }
